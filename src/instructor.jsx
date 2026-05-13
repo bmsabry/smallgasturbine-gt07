@@ -271,8 +271,8 @@ function EnrolledTab({ enrollments, onOpenStudent, onChanged }) {
                   <td style={cellPad} className="muted small">{fmtDate(e.granted_at)}</td>
                   <td style={cellPad} onClick={(ev) => ev.stopPropagation()}>
                     {e.revoked_at
-                      ? <button className="btn btn-ghost small-btn" onClick={async () => { try { await api.adminRestoreEnrollment(e.user_id); onChanged(); } catch (er) { alert(er.message); }}}>Restore</button>
-                      : <button className="btn btn-ghost small-btn" onClick={async () => { if (confirm(`Revoke access for ${e.user_email}?`)) { try { await api.adminRevokeEnrollment(e.user_id); onChanged(); } catch (er) { alert(er.message); }}}}>Revoke</button>}
+                      ? <button className="btn btn-ghost small-btn" onClick={async () => { try { const r = await api.adminRestoreEnrollment(e.user_id); if (r && typeof r.cascade_restored === 'number' && r.cascade_restored > 0) alert(`Restored + ${r.cascade_restored} downstream module${r.cascade_restored === 1 ? '' : 's'} also restored.`); onChanged(); } catch (er) { alert(er.message); }}}>Restore</button>
+                      : <button className="btn btn-ghost small-btn" onClick={async () => { if (confirm(`Revoke ${e.user_email}?\n\nThis revokes their access to this module AND any downstream modules they have via the access cascade. Restoring later will re-grant the chain.`)) { try { const r = await api.adminRevokeEnrollment(e.user_id); if (r && typeof r.cascade_revoked === 'number' && r.cascade_revoked > 0) alert(`Revoked + ${r.cascade_revoked} downstream module${r.cascade_revoked === 1 ? '' : 's'} also revoked.`); onChanged(); } catch (er) { alert(er.message); }}}}>Revoke</button>}
                   </td>
                 </tr>
               );
