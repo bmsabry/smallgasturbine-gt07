@@ -90,3 +90,10 @@ export async function adminGrantAccessRequest(userId) {
 export async function adminDenyAccessRequest(userId) {
   return request(`/learning/${MODULE_ID}/access-requests/${userId}/deny`, { method: "POST" });
 }
+
+// ─── cross-module admin (not module-scoped) ───────────────────────────
+export async function adminBackfillCascade() {
+  // Re-applies _AUTO_GRANT_ON_ACCEPT to every existing active enrollment.
+  // Run after adding a new module so existing students get the new one.
+  return request(`/learning/admin/backfill-cascade`, { method: "POST" });
+}

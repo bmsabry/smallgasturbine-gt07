@@ -61,6 +61,19 @@ export default function Instructor({ onBack }) {
           <button className="btn btn-ghost" onClick={reload} disabled={loading}>
             {loading ? "..." : "Refresh"}
           </button>
+          <button className="btn btn-ghost" title="Apply the cross-module access cascade to all existing enrollees. Run this once after a new module ships so existing students get access without manual backfill." onClick={async () => {
+            if (!confirm("Apply the cross-module access cascade to ALL existing enrollees?\n\nThis is idempotent — running twice does nothing the second time.\nUse it after deploying a new module so existing students get auto-enrolled.")) return;
+            try {
+              const r = await api.adminBackfillCascade();
+              const byMod = r.by_source_module && Object.keys(r.by_source_module).length
+                ? Object.entries(r.by_source_module).map(([k,v]) => `  ${k} → ${v}`).join("\n")
+                : "  (none — every cascade target was already satisfied)";
+              alert(`Backfill complete.\n\nNew enrollments created: ${r.total_new_enrollments}\nSeeds processed: ${r.seeds_processed}\nRegistered modules: ${(r.registered_modules || []).join(", ")}\n\nBreakdown by source module:\n${byMod}`);
+              reload();
+            } catch (e) {
+              alert("Backfill failed: " + (e.message || String(e)));
+            }
+          }}>Sync new modules</button>
           <button className="btn btn-ghost" style={{ marginLeft: "auto" }} onClick={onBack}>← Back to module</button>
         </div>
       </div>
