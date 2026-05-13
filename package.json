@@ -1,0 +1,20 @@
+{
+  "name": "smallgasturbine-gt07",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Login-gated interactive learning module for GT-07 Axial Turbine (ProReadyEngineer Small Jet Engine Design Training).",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "vite": "^8.0.4"
+  }
+}
